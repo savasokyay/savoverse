@@ -1,0 +1,1209 @@
+/*
+ * lbxd-stats — Custom Dash UI stylesheet
+ * WP-20: Dash UI Core Layout
+ *
+ * All color values are kept in ui_config.json["colors"].
+ * This file uses the same values as CSS custom properties for animation/transition use.
+ * Zero hardcode in Python layout files — all structural CSS here.
+ */
+
+/* ── CSS Variables ────────────────────────────────────────────────────────── */
+:root {
+  --bg:              #14181c;
+  --surface:         #1c2128;
+  --surface-el:      #252d37;
+  --border:          #30363d;
+  --text-primary:    #e9ecef;
+  --text-muted:      #adb5bd;
+  --text-disabled:   #6c757d;
+  --neon-green:      #00ff9f;
+  --neon-cyan:       #00e5ff;
+  --gold:            #FFD700;
+  --lbxd-green:      #00C030;
+  --lbxd-orange:     #FF8000;
+  --danger:          #ff4757;
+
+  --sidebar-w:       220px;
+  --sidebar-w-col:   56px;
+  --legend-w:        220px;
+  --footer-h:        32px;
+
+  --transition:      0.22s ease;
+
+  /* ── Tracking page — 1440p baseline (WP-47) ───────────────────────────── */
+  --tracking-circle-h:   180px;
+  --tracking-grid-gap:   12px;
+  --tracking-zone-font:  0.75rem;
+}
+
+/* ── Tracking page — 1080p override (WP-47) ──────────────────────────────── */
+@media (max-height: 1200px) {
+  :root {
+    --tracking-circle-h:   140px;   /* WP-47 fix: user-calibrated 1080p value */
+    --tracking-grid-gap:   6px;     /* WP-47: user-calibrated 1080p value */
+    --tracking-zone-font:  0.5625rem; /* 0.75 × 0.75 */
+  }
+}
+
+/* ── Tracking grid + circle helpers (WP-47) ──────────────────────────────── */
+.tracking-circle-grid {
+  grid-auto-rows: var(--tracking-circle-h);
+  gap:            var(--tracking-grid-gap);
+}
+
+.tracking-zone-label {
+  font-size: var(--tracking-zone-font);
+}
+
+.tracking-circle-h {
+  height: var(--tracking-circle-h);
+}
+
+/* ── Reset / Base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 0.9rem;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Root layout ──────────────────────────────────────────────────────────── */
+#app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Comparison banner (hidden by default, shown above app-outer) */
+#comparison-banner {
+  flex-shrink: 0;
+}
+
+/* Outer wrapper: sidebar + main + legend */
+#app-outer {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Sidebar ──────────────────────────────────────────────────────────────── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  flex-shrink: 0;
+  background-color: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: width var(--transition), min-width var(--transition);
+}
+
+#sidebar.collapsed {
+  width: var(--sidebar-w-col);
+  min-width: var(--sidebar-w-col);
+}
+
+/* ── Sidebar Header ───────────────────────────────────────────────────────── */
+#sidebar-header {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  flex-shrink: 0;
+}
+
+/* Hamburger toggle — styled as a nav item, neon accent */
+.sidebar-toggle-btn {
+  color: var(--neon-green) !important;
+  font-size: 0.845rem;
+  opacity: 0.75;
+}
+
+.sidebar-toggle-btn:hover {
+  opacity: 1;
+  background-color: rgba(0,255,159,0.06) !important;
+}
+
+#sidebar-amblem {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+
+#sidebar-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  transition: opacity var(--transition), max-width var(--transition);
+}
+
+#sidebar.collapsed #sidebar-title {
+  opacity: 0;
+  max-width: 0;
+  pointer-events: none;
+}
+
+.sidebar-app-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--gold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+/* ── Sidebar Nav ──────────────────────────────────────────────────────────── */
+#sidebar-nav {
+  flex: 0 0 auto;
+  padding: 6px 0;
+}
+
+.nav-item-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  padding: 9px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-muted);
+  font-size: 0.845rem;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.nav-item-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.nav-item-btn.active {
+  border-left-color: var(--neon-green);
+  background-color: var(--sidebar-active-bg, rgba(0,255,159,0.08));
+  color: var(--neon-green);
+  font-weight: 500;
+}
+
+.nav-item-btn.disabled,
+.nav-item-btn:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.nav-item-btn.disabled:hover {
+  background: none;
+  color: var(--text-disabled);
+}
+
+.nav-icon {
+  font-size: 1.05rem;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+.nav-label {
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity var(--transition), max-width var(--transition);
+}
+
+#sidebar.collapsed .nav-label {
+  opacity: 0;
+  max-width: 0;
+  pointer-events: none;
+}
+
+/* ── Sidebar Divider ──────────────────────────────────────────────────────── */
+.sidebar-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 5px 10px;
+  flex-shrink: 0;
+}
+
+/* ── Sidebar Filters ──────────────────────────────────────────────────────── */
+#sidebar-filters {
+  padding: 8px 10px 4px;
+  flex-shrink: 0;
+  transition: opacity var(--transition);
+}
+
+#sidebar.collapsed #sidebar-filters {
+  opacity: 0;
+  pointer-events: none;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.filter-section-title {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-disabled);
+  margin-bottom: 5px;
+  display: block;
+}
+
+/* Year range slider overrides */
+.year-range-slider .rc-slider-rail { background: var(--border); }
+.year-range-slider .rc-slider-track { background: var(--neon-green); opacity: 0.5; }
+.year-range-slider .rc-slider-handle { border-color: var(--neon-green); background: var(--surface-el); }
+
+/* Film type toggle buttons */
+.type-filter-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-disabled);
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 0.68rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.type-filter-btn:hover {
+  border-color: var(--text-muted);
+  color: var(--text-muted);
+}
+
+.type-filter-btn.active {
+  background: rgba(0,229,255,0.12);
+  border-color: rgba(0,229,255,0.45);
+  color: var(--neon-cyan);
+}
+
+/* ── WP-32: Lifetime Diary sidebar sub-controls ──────────────────────────── */
+.sub-ctrl-panel {
+  padding: 4px 8px 8px 14px;
+}
+
+.sub-ctrl-label {
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-disabled);
+  margin-bottom: 3px;
+  display: block;
+}
+
+.sub-ctrl-row {
+  display: flex;
+  gap: 4px;
+}
+
+.sub-ctrl-mode-btn {
+  flex: 1;
+  background: var(--surface-elevated, #252d37);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 4px;
+  padding: 3px 0;
+  font-size: 0.67rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sub-ctrl-mode-btn:hover {
+  border-color: var(--text-muted);
+  color: var(--text-primary);
+}
+
+.sub-ctrl-mode-btn.active {
+  background: rgba(0,255,159,0.12);
+  border-color: rgba(0,255,159,0.5);
+  color: #00ff9f;
+  font-weight: 600;
+}
+
+/* Dash Dropdown dark theme — targets both react-select v1 (older Dash) and v3+ */
+/* WP-32: color set at container level so react-select inherits regardless of version */
+.sub-ctrl-dropdown {
+  font-size: 0.7rem;
+  color: #000000 !important;
+}
+
+/* ── react-select v3+ (Dash ≥2.5) ── */
+/* Control box (closed and focused — prevent white background) */
+.sub-ctrl-dropdown [class*="control"],
+.sub-ctrl-dropdown [class*="control"]:hover {
+  background: #252d37 !important;
+  border-color: #30363d !important;
+  box-shadow: none !important;
+  min-height: 26px !important;
+}
+/* Keep focused control dark too */
+.sub-ctrl-dropdown [class*="control"]:focus-within {
+  border-color: rgba(0,255,159,0.4) !important;
+  background: #252d37 !important;
+}
+/* The inner input element that was turning white */
+.sub-ctrl-dropdown input,
+.sub-ctrl-dropdown input:focus,
+.sub-ctrl-dropdown input:active {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #000000 !important;
+  caret-color: #000000 !important;
+}
+/* Selected value text — multiple class name patterns for different react-select versions */
+.sub-ctrl-dropdown [class*="singleValue"],
+.sub-ctrl-dropdown [class*="single-value"],
+.sub-ctrl-dropdown [class*="SingleValue"],
+.sub-ctrl-dropdown [class*="Value"]:not([class*="menu"]):not([class*="option"]):not([class*="Container"]) {
+  color: #000000 !important;
+  font-size: 0.7rem !important;
+}
+/* Placeholder text */
+.sub-ctrl-dropdown [class*="placeholder"],
+.sub-ctrl-dropdown [class*="Placeholder"] {
+  color: #000000 !important;
+  font-size: 0.7rem !important;
+}
+/* Dropdown arrow */
+.sub-ctrl-dropdown [class*="indicatorContainer"] {
+  color: #6c757d !important;
+  padding: 2px 4px !important;
+}
+/* Dropdown separator */
+.sub-ctrl-dropdown [class*="indicatorSeparator"] {
+  background: #30363d !important;
+}
+/* Value container (prevents white bleed-through) */
+.sub-ctrl-dropdown [class*="ValueContainer"],
+.sub-ctrl-dropdown [class*="container"] > div {
+  background: transparent !important;
+}
+/* Open menu */
+.sub-ctrl-dropdown [class*="menu"] {
+  background: #252d37 !important;
+  border: 1px solid #30363d !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+  z-index: 9999 !important;
+}
+.sub-ctrl-dropdown [class*="MenuList"] {
+  background: #252d37 !important;
+}
+/* Menu items */
+.sub-ctrl-dropdown [class*="option"] {
+  background: transparent !important;
+  color: #e9ecef !important;
+  font-size: 0.7rem !important;
+  padding: 5px 8px !important;
+  cursor: pointer !important;
+}
+.sub-ctrl-dropdown [class*="option"]:hover,
+.sub-ctrl-dropdown [class*="option--is-focused"] {
+  background: rgba(255,255,255,0.08) !important;
+}
+.sub-ctrl-dropdown [class*="option--is-selected"] {
+  background: rgba(0,255,159,0.12) !important;
+  color: #00ff9f !important;
+}
+
+/* ── react-select v1 (legacy Dash < 2.5) ── */
+.sub-ctrl-dropdown .Select-control,
+.sub-ctrl-dropdown .Select-control:hover {
+  background: #252d37 !important;
+  border-color: #30363d !important;
+}
+.sub-ctrl-dropdown .is-focused .Select-control {
+  border-color: rgba(0,255,159,0.4) !important;
+  box-shadow: none !important;
+}
+.sub-ctrl-dropdown .Select-value-label,
+.sub-ctrl-dropdown .Select-value,
+.sub-ctrl-dropdown .Select-value span { color: #000000 !important; }
+.sub-ctrl-dropdown .Select-placeholder { color: #000000 !important; }
+.sub-ctrl-dropdown .Select-input,
+.sub-ctrl-dropdown .Select-input input {
+  background: transparent !important;
+  color: #000000 !important;
+}
+.sub-ctrl-dropdown .Select-menu-outer {
+  background: #252d37 !important;
+  border-color: #30363d !important;
+}
+.sub-ctrl-dropdown .VirtualizedSelectOption {
+  background: transparent !important;
+  color: #e9ecef !important;
+}
+.sub-ctrl-dropdown .VirtualizedSelectFocusedOption {
+  background: rgba(255,255,255,0.08) !important;
+}
+
+/* ── Reset button ── */
+.sub-ctrl-reset-btn {
+  width: 100%;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-disabled);
+  border-radius: 4px;
+  padding: 3px 0;
+  font-size: 0.65rem;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.15s;
+}
+.sub-ctrl-reset-btn:hover {
+  border-color: rgba(255,69,87,0.5);
+  color: #ff4757;
+}
+
+/* Hide sub-controls when sidebar is collapsed */
+#sidebar.collapsed .sub-ctrl-panel {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* ── Comparison button label ──────────────────────────────────────────────── */
+#sidebar.collapsed #compare-label {
+  opacity: 0;
+  max-width: 0;
+  overflow: hidden;
+  display: inline-block;
+}
+
+/* ── Sidebar QR ───────────────────────────────────────────────────────────── */
+#sidebar-qr {
+  padding: 0;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  transition: opacity var(--transition);
+  overflow: hidden;
+}
+
+/* Collapsed: hide QR link, keep container visible for logo */
+#sidebar.collapsed .qr-link {
+  display: none;
+}
+
+.qr-link {
+  display: block;
+  width: 100%;
+}
+
+.qr-link img {
+  opacity: 0.72;
+  transition: opacity 0.15s;
+  display: block;
+  width: 100%;
+}
+
+.qr-link:hover img { opacity: 1; }
+
+/* Personal logo — hidden when expanded, shown when collapsed */
+.sidebar-logo-wrap {
+  display: none;
+}
+
+#sidebar.collapsed .sidebar-logo-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0 10px;
+  border-top: 1px solid var(--border);
+}
+
+.sidebar-personal-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  opacity: 0.65;
+  transition: opacity 0.15s;
+}
+
+.sidebar-personal-logo:hover { opacity: 1; }
+
+/* ── Main Content ─────────────────────────────────────────────────────────── */
+#main-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 14px 16px;
+  background-color: var(--bg);
+  min-width: 0;
+}
+
+/* ── Filter Chips ─────────────────────────────────────────────────────────── */
+.filter-chips-area {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  min-height: 0;
+}
+
+.filter-chip {
+  background: rgba(0,229,255,0.1);
+  border: 1px solid rgba(0,229,255,0.3);
+  color: var(--neon-cyan);
+  border-radius: 100px;
+  padding: 2px 10px 2px 8px;
+  font-size: 0.68rem;
+  cursor: default;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ── Lifetime badge ───────────────────────────────────────────────────────── */
+.lifetime-badge {
+  font-size: 0.62rem;
+  color: var(--text-disabled);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-left: 7px;
+  vertical-align: middle;
+  cursor: help;
+}
+
+/* ── Plot card ────────────────────────────────────────────────────────────── */
+.plot-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.plot-card-title {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-disabled);
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* ── Expand (fullscreen) button ───────────────────────────────────────────── */
+.plot-expand-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  color: var(--text-disabled);
+  border-radius: 4px;
+  padding: 1px 6px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  z-index: 5;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1.6;
+}
+
+.plot-expand-btn:hover {
+  background: rgba(255,255,255,0.12);
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+/* ── Venue label toggle button (WP-46) ────────────────────────────────────── */
+.plot-label-toggle-btn {
+  position: absolute;
+  top: 8px;
+  right: 34px;                          /* sits left of the ↗ expand button   */
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  color: var(--text-disabled);
+  border-radius: 4px;
+  padding: 1px 6px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  z-index: 5;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  line-height: 1.6;
+}
+
+.plot-label-toggle-btn:hover {
+  background: rgba(255,255,255,0.12);
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+.plot-label-toggle-btn.active {
+  background: rgba(0, 229, 255, 0.15);  /* neon-cyan tint when on             */
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+}
+
+/* ── Legend Panel ─────────────────────────────────────────────────────────── */
+#legend-panel {
+  width: var(--legend-w);
+  min-width: var(--legend-w);
+  flex-shrink: 0;
+  background-color: var(--surface);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: width var(--transition), min-width var(--transition);
+}
+
+#legend-panel.collapsed {
+  width: 0;
+  min-width: 0;
+}
+
+#legend-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.legend-panel-title {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-disabled);
+}
+
+#legend-toggle-btn {
+  background: none;
+  border: none;
+  color: var(--text-disabled);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0 4px;
+  transition: color 0.15s;
+}
+
+#legend-toggle-btn:hover { color: var(--text-muted); }
+
+.legend-section-header {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-disabled);
+  padding: 8px 12px 3px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+
+.legend-section-header:first-child {
+  border-top: none;
+  margin-top: 0;
+}
+
+.legend-entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 12px;
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.legend-count {
+  color: #6c757d;
+  font-size: 0.60rem;
+  margin-left: 4px;
+  opacity: 0.8;
+}
+
+.venue-row-label {
+  font-size: 0.60rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #6c757d;
+  padding: 2px 0 4px 2px;
+}
+
+.legend-swatch-solid {
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.legend-swatch-dashed {
+  width: 18px;
+  height: 0;
+  border-top: 2px dashed;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.legend-marker {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-no-entries {
+  font-size: 0.7rem;
+  color: var(--text-disabled);
+  padding: 12px;
+  font-style: italic;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+#app-footer {
+  height: var(--footer-h);
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+
+.footer-app-name {
+  font-size: 0.65rem;
+  color: var(--gold);        /* WP-20: gold accent for app name */
+  font-weight: 500;
+}
+
+.footer-version {
+  font-size: 0.65rem;
+  color: var(--text-disabled);
+}
+
+.footer-sep {
+  font-size: 0.65rem;
+  color: var(--border);
+}
+
+.footer-powered {
+  font-size: 0.65rem;
+  color: var(--danger);      /* WP-20: danger/red for powered-by text */
+}
+
+/* ── Comparison Banner ────────────────────────────────────────────────────── */
+#comparison-banner {
+  background: rgba(255,215,0,0.08);
+  border-bottom: 1px solid rgba(255,215,0,0.25);
+  color: var(--gold);
+  padding: 5px 16px;
+  font-size: 0.73rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.exit-comparison-btn {
+  background: none;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 1px 8px;
+  font-size: 0.65rem;
+  transition: background 0.15s;
+}
+
+.exit-comparison-btn:hover {
+  background: rgba(255,215,0,0.15);
+}
+
+/* ── Expand Modal ─────────────────────────────────────────────────────────── */
+.expand-modal .modal-content {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.expand-modal .modal-header {
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+}
+
+.expand-modal .modal-body {
+  padding: 8px;
+}
+
+/* ── Comparison Modal ─────────────────────────────────────────────────────── */
+.comparison-modal .modal-content {
+  background-color: var(--surface);
+  border: 1px solid rgba(255,215,0,0.3);
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-disabled); }
+
+/* ── Plotly graph sizing ──────────────────────────────────────────────────── */
+.js-plotly-plot, .plotly { width: 100% !important; }
+
+/* ── Poster grid (WP-14) ──────────────────────────────────────────────────── */
+.poster-hover:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.7) !important;
+}
+
+/* Film card tooltip override — remove default BS padding */
+.film-card-tooltip .tooltip-inner {
+  background: transparent;
+  padding: 0;
+  max-width: 340px;
+}
+
+.film-card-tooltip .tooltip-arrow { display: none; }
+
+/* ── WP-29: Responsive Layout — portrait orientation ─────────────────────── */
+/*
+ * In portrait orientation, main layout columns (md-5 through md-9) collapse to
+ * full width so plot rows stack vertically. Metric tile columns (md-2, md-3)
+ * are intentionally excluded — their sm-4 class already gives 3-per-row on
+ * narrow viewports.
+ * col-md-12 is full-width by definition, no override needed.
+ */
+@media (orientation: portrait) {
+  .g-3 > .col-md-4,
+  .g-3 > .col-md-5,
+  .g-3 > .col-md-6,
+  .g-3 > .col-md-7,
+  .g-3 > .col-md-8,
+  .g-3 > .col-md-9 {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+}
+
+/* ── WP-28: Last Visits mini poster grid ─────────────────────────────────── */
+/*
+ * Grid approach: explicit rows set per orientation, implicit rows have height 0.
+ * Items that don't fit into explicit rows fall into implicit rows and are hidden.
+ * Landscape = 1 row max, Portrait = 2 rows max — no value-based cutoffs.
+ */
+.last-visits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 52px);
+  grid-auto-rows: 0;        /* implicit rows are zero-height */
+  overflow: hidden;
+  gap: 5px;
+  padding: 4px 0;
+}
+
+/* Each grid item clips to its cell height.
+   Explicit rows = 78px → item shows fully.
+   Implicit rows = 0px  → item clipped to nothing. */
+.last-visits-grid > div {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (orientation: landscape) {
+  .last-visits-grid {
+    grid-template-rows: 78px;             /* 1 explicit row */
+  }
+}
+
+@media (orientation: portrait) {
+  .last-visits-grid {
+    grid-template-rows: repeat(2, 78px); /* 2 explicit rows */
+  }
+}
+
+/* ── Utility ──────────────────────────────────────────────────────────────── */
+.text-gold   { color: var(--gold); }
+.text-neon   { color: var(--neon-green); }
+.text-cyan   { color: var(--neon-cyan); }
+.text-danger { color: var(--danger); }
+.border-subtle { border-color: var(--border) !important; }
+
+/* ── WP-18: Tracking page — portrait-mode warning ─────────────────────────── */
+.portrait-warning {
+  display: none;   /* hidden in landscape */
+}
+
+.landscape-only {
+  display: block;  /* visible in landscape */
+}
+
+@media (orientation: portrait) {
+  .portrait-warning {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    height: 40vh;
+    color: var(--text-primary);
+    text-align: center;
+    padding: 24px;
+  }
+
+  .landscape-only {
+    display: none;  /* hide grid in portrait */
+  }
+}
+
+/* ── WP-39: Diary Master DataTable ───────────────────────────────────────── */
+
+.dt-page-container {
+  padding-top: 12px;
+}
+
+/* Entry count badge above table */
+.dt-entry-count {
+  display: inline-block;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+/*
+ * DataTable dark theme overrides.
+ * Most styling is applied via inline style_* props in the Python component
+ * to guarantee rendering order. These CSS rules cover structural elements
+ * (filter row input placeholder, active-page button borders, scrollbars).
+ */
+#diary-master-table .dash-filter input {
+  text-align: left;          /* WP-39: prevent right-alignment on title filter */
+  color: var(--neon-green);  /* WP-39: typed text in neon green for visibility */
+}
+
+#diary-master-table .dash-filter input::placeholder {
+  color: var(--text-muted);  /* WP-39: placeholder readable but softer than typed text */
+  opacity: 1;
+}
+
+#diary-master-table .dash-filter input:focus {
+  outline: none;
+  border-bottom: 1px solid var(--neon-cyan) !important;
+}
+
+/* Sort arrow color */
+#diary-master-table .column-header--sort span.sort-arrow {
+  color: var(--neon-green);
+}
+
+/* Pagination controls dark theme */
+#diary-master-table .previous-next-container button,
+#diary-master-table .page-number {
+  background: var(--surface-el);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.72rem;
+  padding: 2px 8px;
+}
+
+#diary-master-table .previous-next-container button:hover,
+#diary-master-table .page-number:hover {
+  background: rgba(0,255,159,0.08);
+  border-color: var(--neon-green);
+}
+
+/* ── Tracking badge — colored oval pill (Phase 2) ─────────────────────────── */
+.dt-track-badge {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #14181c;
+  margin: 1px 2px;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+/* ── Oscar badge — gold winner / grey nominee (Phase 2) ──────────────────── */
+.dt-oscar-badge {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  margin: 1px 2px;
+  white-space: nowrap;
+}
+.dt-oscar-winner { background: var(--gold);     color: #14181c; }
+.dt-oscar-nom    { background: var(--text-disabled); color: var(--text-primary); }
+
+/* ── Preset tab bar (Phase 3) ─────────────────────────────────────────────── */
+.dt-preset-bar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.dt-preset-btn {
+  background: var(--surface-el);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.dt-preset-btn:hover {
+  background: rgba(0,255,159,0.06);
+  border-color: rgba(0,255,159,0.3);
+  color: var(--text-primary);
+}
+
+.dt-preset-btn.active {
+  background: rgba(0,255,159,0.12);
+  border-color: rgba(0,255,159,0.5);
+  color: var(--neon-green);
+}
+
+/* WP-39 Phase 3: Reset / Clear button — utility, never active */
+.dt-preset-btn.dt-preset-reset {
+  border-style: dashed;
+  margin-left: 8px;
+  opacity: 0.65;
+}
+.dt-preset-btn.dt-preset-reset:hover {
+  opacity: 1;
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+/* WP-39 Faz4: Custom preset button — starred label, amber tint */
+.dt-preset-btn.dt-preset-custom {
+  border-color: rgba(255,200,0,0.35);
+  color: #c8a800;
+}
+.dt-preset-btn.dt-preset-custom.active {
+  background: rgba(255,200,0,0.12);
+  border-color: rgba(255,200,0,0.6);
+  color: #FFD700;
+}
+
+/* WP-39 Faz4: Save preset button — cyan outline */
+.dt-preset-btn.dt-preset-save {
+  margin-left: 8px;
+  border-color: rgba(0,229,255,0.35);
+  color: #00b8d4;
+}
+.dt-preset-btn.dt-preset-save:hover {
+  background: rgba(0,229,255,0.08);
+  border-color: rgba(0,229,255,0.6);
+  color: #00e5ff;
+}
+
+/* WP-39 Faz4: Delete preset button — red tint */
+.dt-preset-btn.dt-preset-delete {
+  border-color: rgba(255,71,87,0.35);
+  color: #c0392b;
+}
+.dt-preset-btn.dt-preset-delete:hover {
+  background: rgba(255,71,87,0.1);
+  border-color: rgba(255,71,87,0.6);
+  color: #ff4757;
+}
+
+/* WP-39 Faz4: Top-by-Year inline year select */
+.dt-year-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.dt-year-select {
+  width: 110px !important;
+  min-width: 110px;
+}
+
+/* WP-39 Faz4: Save preset name input */
+.dt-preset-name-input {
+  background: var(--surface-el) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border) !important;
+  font-size: 0.82rem;
+}
+
+/* ── WP-39 Faz6: Toolbar (export + columns + entry count) ─────────────────── */
+.dt-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.dt-toolbar-btn {
+  background: var(--surface-el);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.dt-toolbar-btn:hover {
+  border-color: rgba(0,229,255,0.4);
+  color: #00e5ff;
+}
+
+.dt-export-btn {
+  border-color: rgba(0,255,159,0.3);
+  color: var(--neon-green);
+}
+.dt-export-btn:hover {
+  border-color: var(--neon-green);
+  background: rgba(0,255,159,0.06);
+}
+
+/* ── WP-39 Faz6: Column toggle collapse panel ─────────────────────────────── */
+.dt-col-toggle-collapse {
+  margin-bottom: 8px;
+}
+
+.dt-col-checklist {
+  padding: 8px 12px;
+  background: var(--surface-el);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+/* Override Bootstrap checklist for dark theme */
+.dt-col-checklist .form-check {
+  margin-right: 14px;
+}
+.dt-col-checklist .form-check-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.dt-col-checklist .form-check-input:checked {
+  background-color: var(--neon-green);
+  border-color: var(--neon-green);
+}
+.dt-col-checklist .form-check-input {
+  background-color: #14181c;
+  border-color: var(--border);
+  cursor: pointer;
+}
